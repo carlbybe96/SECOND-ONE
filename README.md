@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FaithMatch
 
-## Getting Started
+Plateforme matrimoniale par compatibilité de foi, de valeurs et de projet de vie. « Pas seulement une rencontre. Une vraie compatibilité. »
 
-First, run the development server:
+Ce dépôt contient une **démo interactive complète**, prête à présenter à un client. Elle tourne entièrement dans le navigateur (aucun serveur, aucune base de données à configurer) : les comptes, profils, matchs, messages et paiements sont simulés et stockés dans le navigateur.
+
+## Lancer la démo
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000) (ou le port indiqué dans le terminal).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Se connecter
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Sur l'écran de connexion, section « Accès démo en un clic » :
 
-## Learn More
+| Compte | Usage |
+|---|---|
+| **Ibrahim** / **Aïcha** | Comptes membres déjà remplis : profil complet, matchs, messages, demandes en attente. Pour explorer l'app telle qu'un vrai membre la voit. |
+| **Équipe** | Espace d'administration : validations, signalements, membres, paiements. |
 
-To learn more about Next.js, take a look at the following resources:
+Ou directement par URL :
+- `/demo/ibrahim`, `/demo/aicha`, `/demo/admin`
+- `/demo/nouveau`, `/demo/nouvelle` — crée un compte **vierge** à la volée et ouvre l'onboarding, pratique pour faire la démo de l'inscription en direct sans ressaisir un formulaire à chaque fois.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Le bandeau en haut de l'app propose **Réinitialiser** : repart d'un jeu de données neuf (utile juste avant une présentation).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Ce que couvre la démo
 
-## Deploy on Vercel
+- **Compatibilité** : questionnaire de 21 questions, score pondéré sur 8 dimensions (religion, valeurs, couple, famille, enfants, finances, mode de vie, distance), points forts et points à discuter expliqués.
+- **Découverte, intérêts, matchs** : filtres réciproques, super-intérêts, notifications en temps réel simulé (le simulateur fait vivre l'app : les profils fictifs répondent, likent, visitent).
+- **Messagerie modérée** : détection automatique des demandes d'argent et des propos déplacés, avec un scénario d'arnaque prêt à démontrer.
+- **Sécurité** : vérification téléphone/selfie, floutage de photo, mode invisible, mode famille (tuteur/wali), signalement, blocage.
+- **Abonnement** : Free / Premium / Premium+, paiement Orange Money / Moov Money / Wave / carte (simulé), boost de visibilité.
+- **Espace admin** : tableau de bord avec graphiques, file de validation des profils, gestion des signalements, liste des membres, historique des paiements.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind CSS v4 · [lucide-react](https://lucide.dev)
+
+Le backend est simulé côté navigateur (`lib/demo/`). Un vrai backend (`supabase/migrations/`, `@supabase/supabase-js`) est amorcé pour le jour où le projet dépasse le stade démo — voir `lib/api.ts`, point d'entrée unique que les pages appellent, à brancher sur Supabase sans toucher à l'interface.
+
+## Vérifier le projet
+
+```bash
+npx tsc --noEmit    # types
+npx eslint .         # lint
+npx next build       # build de production
+```
