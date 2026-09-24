@@ -169,9 +169,9 @@ export const REPORT_REASONS: Record<string, string> = {
 /* ── Parcours relationnel (PRD §22) ─────────────────────── */
 
 export const STAGES = [
-  { icon: "💬", label: "Conversation" },
-  { icon: "📞", label: "Appel" },
-  { icon: "❤️", label: "Relation sérieuse" },
-  { icon: "👨‍👩‍👧", label: "Présentation aux familles" },
-  { icon: "💍", label: "Projet de mariage" },
+  { icon: "💬", label: "Conversation", short: "Conversation" },
+  { icon: "📞", label: "Appel", short: "Appel" },
+  { icon: "❤️", label: "Relation sérieuse", short: "Sérieux" },
+  { icon: "👨‍👩‍👧", label: "Présentation aux familles", short: "Familles" },
+  { icon: "💍", label: "Projet de mariage", short: "Mariage" },
 ];

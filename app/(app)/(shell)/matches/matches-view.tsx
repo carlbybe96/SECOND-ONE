@@ -123,7 +123,11 @@ function Received({ me }: { me: Profile }) {
                     <Star size={12} /> Super-intérêt
                   </span>
                 )}
-                {interest.message && <p className="person-msg">« {interest.message} »</p>}
+                {interest.message && (
+                  <p className="person-msg">
+                    <span>« {interest.message} »</span>
+                  </p>
+                )}
                 <span className="tiny muted" style={{ marginTop: 6 }}>
                   Reçu {timeAgo(interest.createdAt)}
                 </span>

@@ -245,6 +245,10 @@
   font-weight: 600;
   text-align: center;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .step-labels .lab.done {
   color: var(--primary-600);
@@ -423,11 +427,12 @@
 }
 .preview-matches {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin: 26px 0 8px;
 }
 .preview-match {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 14px 10px;
@@ -440,6 +445,10 @@
 .preview-match b {
   font-size: 0.92rem;
   color: var(--dark);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .preview-match small {
   color: var(--muted);
@@ -459,6 +468,7 @@
 .legal ul {
   display: grid;
   gap: 8px;
+  list-style: disc;
   padding-left: 20px;
   color: var(--ink);
   font-size: 0.94rem;
@@ -502,11 +512,34 @@
     height: 40px;
   }
   .preview-matches {
-    grid-template-columns: 1fr 1fr 1fr;
     gap: 8px;
   }
-  .onb-actions .btn-primary {
-    min-width: 0;
-    flex: 1;
+  .preview-match {
+    padding: 10px 6px;
+  }
+  .preview-match .photo {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .onb-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .onb-actions > span {
+    text-align: center;
+  }
+  .photo-picker {
+    align-items: flex-start;
+  }
+  .photo-picker .photo {
+    width: 72px !important;
+    height: 72px !important;
+  }
+  .photo-picker .row .btn {
+    white-space: normal;
+  }
+  .flow-topbar .logo span:last-child {
+    font-size: 1.05rem;
   }
 }

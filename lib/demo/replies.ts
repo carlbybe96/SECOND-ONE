@@ -78,25 +78,46 @@ const SCAM_SCRIPT: Record<Profile["gender"], string[]> = {
 };
 
 export function botReply(bot: Profile, me: Profile, userText: string, turn: number): string {
-  const t = userText.toLowerCase();
-  const muslim = bot.religion.key === "islam";
-  const seed = hashString(`${bot.id}:${turn}`);
-  const followUp = FOLLOW_UPS[seed % FOLLOW_UPS.length].replace("{heureux}", g(me, "heureux", "heureuse"));
-
   if (bot.persona === "scam") {
     const script = SCAM_SCRIPT[bot.gender];
     return script[Math.min(turn, script.length - 1)];
   }
+  const t = userText.toLowerCase();
+  const muslim = bot.religion.key === "islam";
+  const greeted = turn === 0 && /(salam|assalam|bonjour|bonsoir|salut|coucou|hello)/.test(t);
+  const hello = muslim ? `Wa alaykoum salam ${me.firstName} 😊` : `Bonjour ${me.firstName} 😊`;
+  const answer = topicalReply(bot, me, t, turn);
+  // Un premier message qui salue ET pose une question reçoit les deux : le salut, puis la réponse.
+  if (greeted) return answer ? `${hello} ${answer}` : `${hello} Merci pour ton message, ça me fait plaisir. Comment se passe ta journée ?`;
+  return answer ?? genericReply(bot, me, turn);
+}
+
+function followUpFor(bot: Profile, me: Profile, turn: number) {
+  const seed = hashString(`${bot.id}:${turn}`);
+  return FOLLOW_UPS[seed % FOLLOW_UPS.length].replace("{heureux}", g(me, "heureux", "heureuse"));
+}
+
+function genericReply(bot: Profile, me: Profile, turn: number): string {
+  const followUp = followUpFor(bot, me, turn);
+  const generic = [
+    `Je comprends tout à fait. ${followUp}`,
+    `C'est intéressant, j'aime ta façon de voir les choses. ${followUp}`,
+    `Je te rejoins là-dessus. ${followUp}`,
+  ];
+  return generic[hashString(`${bot.id}:${turn}:g`) % generic.length];
+}
+
+/** Réponse liée au sujet du message, ou null si aucun sujet reconnu. */
+function topicalReply(bot: Profile, me: Profile, t: string, turn: number): string | null {
+  const muslim = bot.religion.key === "islam";
+  const seed = hashString(`${bot.id}:${turn}`);
+  const followUp = followUpFor(bot, me, turn);
 
   if (/(argent|fcfa|orange money|moov|wave|envoie[- ]moi)/.test(t)) {
     return "Je préfère qu'on ne parle pas d'argent ici, j'espère que tu comprends. Apprenons d'abord à nous connaître 🙂";
   }
   if (/(appel|appeler|num[ée]ro|whatsapp|rencontr|se voir|caf[ée])/.test(t)) {
     return "Avec plaisir, mais j'aimerais qu'on échange encore un peu ici avant, pour mieux se connaître. Ensuite, pourquoi pas un appel, avec la bénédiction de nos familles 😊";
-  }
-  if (/(salam|assalam|bonjour|bonsoir|salut|coucou|hello)/.test(t) && turn === 0) {
-    const hello = muslim ? `Wa alaykoum salam ${me.firstName} 😊` : `Bonjour ${me.firstName} 😊`;
-    return `${hello} Merci pour ton message, ça me fait plaisir. Comment se passe ta journée ?`;
   }
   if (/(travail|m[ée]tier|boulot|profession|fais quoi|job)/.test(t)) {
     return `Je suis ${bot.profession.toLowerCase()} à ${bot.city}. J'aime ce que je fais, même si c'est prenant. ${followUp}`;
@@ -122,10 +143,5 @@ export function botReply(bot: Profile, me: Profile, userText: string, turn: numb
   if (t.includes("?")) {
     return `Bonne question ! Je dirais que la sincérité compte plus que tout pour moi. ${followUp}`;
   }
-  const generic = [
-    `Je comprends tout à fait. ${followUp}`,
-    `C'est intéressant, j'aime ta façon de voir les choses. ${followUp}`,
-    `Je te rejoins là-dessus. ${followUp}`,
-  ];
-  return generic[seed % generic.length];
+  return null;
 }

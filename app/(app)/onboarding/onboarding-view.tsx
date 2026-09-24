@@ -81,7 +81,9 @@ function OnboardingFlow({ initial, startStep }: { initial: Profile; startStep: n
     const answers = { ...draft.answers, [q.id]: option };
     set({ answers });
     if (qi < QUIZ.length - 1) {
-      window.setTimeout(() => setQi((i) => i + 1), 260);
+      // Deux réponses rapides à la même question ne doivent pas faire sauter la suivante.
+      const current = qi;
+      window.setTimeout(() => setQi((i) => (i === current ? i + 1 : i)), 260);
       return;
     }
     setBusy(true);

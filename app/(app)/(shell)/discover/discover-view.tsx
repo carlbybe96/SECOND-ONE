@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/toaster";
 import { api, type DiscoverFilters, type ProfileCard } from "@/lib/api";
 import { COUNTRIES, PRACTICE_LEVELS } from "@/lib/config";
 import { useQuery, useSession } from "@/lib/hooks";
-import { religionLine } from "@/lib/profile-utils";
+import { practiceLabel, religionLine } from "@/lib/profile-utils";
 
 const FILTERS_KEY = "fm_discover_filters";
 
@@ -156,6 +156,17 @@ export default function DiscoverView() {
                 {current.online && <span className="badge badge-dark"><span className="online-dot" /> En ligne</span>}
               </div>
             </Link>
+            <div className="d-actions">
+              <button type="button" className="round-btn pass" onClick={() => act("pass")} aria-label="Passer" title="Passer (flèche gauche)">
+                <X size={26} />
+              </button>
+              <button type="button" className="round-btn super" onClick={openSuper} aria-label="Super-intérêt" title="Super-intérêt avec message">
+                <Star size={22} />
+              </button>
+              <button type="button" className="round-btn like" onClick={() => act("interest")} aria-label="Je suis intéressé(e)" title="Intéressé(e) (flèche droite)">
+                <Heart size={26} fill="currentColor" />
+              </button>
+            </div>
             <div className="d-info">
               <div className="d-name">
                 <h3>
@@ -174,21 +185,10 @@ export default function DiscoverView() {
               </div>
               <div className="d-tags">
                 <span className="badge badge-green">{religionLine(current.profile)}</span>
-                <span className="badge badge-gray">{PRACTICE_LEVELS[current.profile.religion.practice]}</span>
+                <span className="badge badge-gray">{practiceLabel(current.profile)}</span>
                 <span className="badge badge-gray">{current.profile.intention === "mariage" ? "💍 Mariage" : "🤝 Relation sérieuse"}</span>
               </div>
               <p className="d-bio">{current.profile.bio}</p>
-            </div>
-            <div className="d-actions">
-              <button type="button" className="round-btn pass" onClick={() => act("pass")} aria-label="Passer" title="Passer (flèche gauche)">
-                <X size={26} />
-              </button>
-              <button type="button" className="round-btn super" onClick={openSuper} aria-label="Super-intérêt" title="Super-intérêt avec message">
-                <Star size={22} />
-              </button>
-              <button type="button" className="round-btn like" onClick={() => act("interest")} aria-label="Je suis intéressé(e)" title="Intéressé(e) (flèche droite)">
-                <Heart size={26} fill="currentColor" />
-              </button>
             </div>
           </article>
 

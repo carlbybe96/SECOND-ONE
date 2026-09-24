@@ -1,5 +1,10 @@
+"use client";
+
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 import { CATEGORY_LABEL, QUIZ } from "@/lib/questions";
+
+const LETTERS = ["a", "b", "c", "d"];
 
 export default function StepQuiz({
   index,
@@ -15,6 +20,22 @@ export default function StepQuiz({
   busy: boolean;
 }) {
   const item = QUIZ[index];
+
+  // Sur ordinateur, on peut répondre au clavier : A, B, C, D (ou 1 à 4).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (busy || e.ctrlKey || e.metaKey || e.altKey) return;
+      const key = e.key.toLowerCase();
+      const idx = LETTERS.includes(key) ? LETTERS.indexOf(key) : ["1", "2", "3", "4"].indexOf(key);
+      if (idx >= 0 && idx < item.options.length) {
+        e.preventDefault();
+        onSelect(idx);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [item, busy, onSelect]);
+
   return (
     <>
       <div className="q-meta">
@@ -37,10 +58,10 @@ export default function StepQuiz({
       </div>
       <div className="onb-actions">
         <button type="button" className="btn btn-ghost" onClick={onPrev} disabled={index === 0 || busy}>
-          <ArrowLeft size={16} /> Question précédente
+          <ArrowLeft size={16} /> Précédente
         </button>
-        <span className="tiny muted" style={{ alignSelf: "center" }}>
-          Choisis une réponse pour continuer
+        <span className="tiny muted hide-sm" style={{ alignSelf: "center" }}>
+          Astuce : réponds avec les touches A, B, C, D
         </span>
       </div>
     </>

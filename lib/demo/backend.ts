@@ -1111,6 +1111,9 @@ export function tick(): void {
           ? `${muslim ? "Assalamou alaykoum" : "Bonjour"} ${human.firstName} 😊 Merci d'avoir accepté. J'ai lu ton profil avec attention, on a beaucoup de choses en commun. Comment vas-tu ?`
           : botReply(bot, human, payload.text ?? "", turn);
       const analysis = analyzeMessage(text);
+      // Le bot « lit » les messages en attente avant de répondre (coches doubles côté humain).
+      const readTime = new Date(Date.now() - 400).toISOString();
+      for (const m of d.messages) if (m.matchId === match.id && m.from === human.id && !m.readAt) m.readAt = readTime;
       const msg: Message = { id: nextId("msg"), matchId: match.id, from: bot.id, text, createdAt: nowIso(), risk: analysis.level, flags: analysis.flags };
       d.messages.push(msg);
       match.lastMessageAt = msg.createdAt;

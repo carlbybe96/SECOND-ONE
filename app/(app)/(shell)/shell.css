@@ -449,7 +449,8 @@
 }
 .d-photo {
   width: 100%;
-  aspect-ratio: 5 / 4;
+  /* Les boutons d'action doivent rester visibles sur un écran de portable (768 px de haut). */
+  height: clamp(240px, 40vh, 400px);
 }
 .d-badges {
   position: absolute;
@@ -460,7 +461,7 @@
   flex-wrap: wrap;
 }
 .d-info {
-  padding: 18px 22px 6px;
+  padding: 4px 22px 20px;
 }
 .d-name {
   display: flex;
@@ -500,12 +501,16 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* Les boutons chevauchent le bas de la photo : toujours visibles, même sur un petit écran. */
 .d-actions {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 18px;
-  padding: 16px 20px 22px;
+  margin-top: -36px;
+  padding: 0 20px 6px;
 }
 .round-btn {
   width: 62px;
@@ -876,6 +881,7 @@
     font-size: 1.3rem;
   }
   .d-photo {
+    height: auto;
     aspect-ratio: 1 / 1;
   }
 }
@@ -1057,7 +1063,7 @@
 /* ── Matchs ──────────────────────────── */
 .person-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 14px;
 }
 .person {
@@ -1107,6 +1113,9 @@
   border-radius: 10px;
   padding: 8px 10px;
   margin-top: 6px;
+}
+/* La coupure se fait sur le texte, pas sur la bulle (sinon une 4e ligne dépasse dans la marge). */
+.person-msg span {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -1297,8 +1306,7 @@
   display: none;
 }
 .stage {
-  flex: 1;
-  min-width: 96px;
+  flex: 1 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;

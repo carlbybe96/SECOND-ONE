@@ -82,7 +82,7 @@ export default function ProfileView() {
 
   const p = card.profile;
   const premium = quota?.plan !== "free";
-  const status = presence(p.lastActiveAt);
+  const status = presence(p.lastActiveAt, p.gender);
 
   async function interest() {
     setBusy(true);

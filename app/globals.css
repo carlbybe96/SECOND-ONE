@@ -51,6 +51,8 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  /* Filet de sécurité mobile : jamais de défilement horizontal (clip garde les en-têtes collants). */
+  overflow-x: clip;
 }
 h1,
 h2,
@@ -60,12 +62,19 @@ h4,
   font-family: var(--font-display);
   color: var(--dark);
   letter-spacing: -0.01em;
+  /* Le reset de Tailwind remet les titres en graisse normale. */
+  font-weight: 700;
 }
 a {
   color: inherit;
 }
 img {
   max-width: 100%;
+}
+/* Tailwind passe les SVG en bloc : les icônes posées dans un texte doivent rester en ligne. */
+svg {
+  display: inline-block;
+  flex-shrink: 0;
 }
 button {
   font: inherit;

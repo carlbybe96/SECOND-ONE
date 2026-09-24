@@ -57,10 +57,11 @@ export function dayKey(d = new Date()): string {
 }
 
 /** Statut de présence à partir de la dernière activité. */
-export function presence(iso: string, now = Date.now()): { online: boolean; label: string } {
+export function presence(iso: string, gender?: "homme" | "femme", now = Date.now()): { online: boolean; label: string } {
   const diff = now - new Date(iso).getTime();
   if (diff < 5 * MIN) return { online: true, label: "En ligne" };
-  return { online: false, label: `Vu(e) ${timeAgo(iso, now)}` };
+  const seen = gender === "femme" ? "Vue" : gender === "homme" ? "Vu" : "Vu(e)";
+  return { online: false, label: `${seen} ${timeAgo(iso, now)}` };
 }
 
 export function capitalize(s: string): string {

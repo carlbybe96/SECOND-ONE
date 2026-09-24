@@ -60,7 +60,7 @@ export default function ConversationView() {
 
   const other = conv.other;
   const mineCount = conv.messages.filter((m) => m.from === me.id).length;
-  const status = presence(other.lastActiveAt);
+  const status = presence(other.lastActiveAt, other.gender);
   const flaggedFromOther = [...conv.messages].reverse().find((m) => m.from === other.id && (m.flags?.length ?? 0) > 0);
   const showIdeas = ideas || mineCount === 0;
 
@@ -152,7 +152,7 @@ export default function ConversationView() {
             title={`Passer à l'étape : ${s.label}`}
           >
             <span className="st-ico">{s.icon}</span>
-            <span className="st-lab">{s.label}</span>
+            <span className="st-lab">{s.short}</span>
           </button>
         ))}
       </div>
