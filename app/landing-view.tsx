@@ -1,120 +1,57 @@
 "use client";
 
-import {
-  ArrowRight,
-  BadgeCheck,
-  Ban,
-  Check,
-  EyeOff,
-  Heart,
-  HeartHandshake,
-  Lock,
-  Menu,
-  MessageCircle,
-  ShieldAlert,
-  ShieldCheck,
-  Sparkles,
-  Star,
-  UserCheck,
-  Users,
-  X,
-} from "lucide-react";
+import { ArrowRight, BadgeCheck, Check, CircleHelp, Compass, EyeOff, Heart, HeartHandshake, ShieldAlert, ShieldCheck, Star, UserCheck, Users, Wallet, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import DemoBanner from "@/components/demo-banner";
-import Logo, { LogoMark } from "@/components/logo";
+import { LogoMark } from "@/components/logo";
+import FinalCta from "@/components/marketing/final-cta";
+import MarketingFooter from "@/components/marketing/footer";
+import MarketingHeader from "@/components/marketing/header";
 import ProfilePhoto from "@/components/ui/photo";
-import { CategoryBars, CompatPoints, ScoreRing } from "@/components/ui/score";
-import { APP, PLANS, STAGES } from "@/lib/config";
-import { fcfa } from "@/lib/format";
-import { QUIZ } from "@/lib/questions";
-import type { Compat } from "@/lib/types";
+import { ScoreRing } from "@/components/ui/score";
 
-const SAMPLE: Compat = {
-  score: 91,
-  label: "Excellente compatibilité",
-  tone: "great",
-  categories: [
-    { key: "religion", label: "Religion", score: 97 },
-    { key: "valeurs", label: "Valeurs", score: 92 },
-    { key: "couple", label: "Couple", score: 90 },
-    { key: "famille", label: "Famille", score: 94 },
-    { key: "enfants", label: "Enfants", score: 96 },
-    { key: "finances", label: "Finances", score: 71 },
-    { key: "lifestyle", label: "Lifestyle", score: 88 },
-    { key: "distance", label: "Distance", score: 100 },
-  ],
-  strengths: ["Même foi et même niveau de pratique", "Vous voulez tous les deux des enfants, et autant", "Alignés sur la place des parents", "Vous vivez tous les deux à Ouagadougou"],
-  discuss: ["La gestion du budget"],
-};
-
-const FAQ = [
+const EXPLORE = [
   {
-    q: `${APP.name} est-il une application de drague ?`,
-    a: "Non. C'est une plateforme matrimoniale : chaque membre déclare chercher le mariage ou une relation sérieuse qui y mène. Les profils sont validés à la main, les messages sont modérés et les recommandations sont limitées pour privilégier la qualité.",
+    href: "/comment-ca-marche",
+    icon: Compass,
+    title: "Comment ça marche",
+    text: "Un parcours guidé en 4 étapes, de l'inscription au projet de mariage.",
   },
   {
-    q: "Comment la compatibilité est-elle calculée ?",
-    a: `Tu réponds à ${QUIZ.length} questions sur 7 thèmes (religion, valeurs, couple, famille, enfants, finances, mode de vie), puis nous comparons tes réponses à celles de chaque profil, avec la distance. Tu obtiens un score de 0 à 100 %, les points qui vous rapprochent et ceux à discuter.`,
+    href: "/compatibilite",
+    icon: HeartHandshake,
+    title: "Compatibilité",
+    text: "8 dimensions analysées, un score expliqué, jamais une boîte noire.",
   },
   {
-    q: "Quelles religions sont représentées ?",
-    a: "L'islam (sunnite, confréries soufies…), le christianisme (catholique, protestant, évangélique…) et d'autres spiritualités. Chacun déclare sa foi et choisit s'il veut rencontrer une personne de la même religion, du même courant, ou s'il est ouvert.",
+    href: "/securite",
+    icon: ShieldCheck,
+    title: "Sécurité",
+    text: "Profils validés à la main, messagerie modérée, anti-arnaque intégré.",
   },
   {
-    q: "Puis-je rester discret ou discrète ?",
-    a: "Oui. Tu peux flouter tes photos jusqu'au match, passer en mode invisible, et impliquer un tuteur (wali) ou un parent grâce au mode famille, sans jamais lui montrer tes conversations privées.",
+    href: "/tarifs",
+    icon: Wallet,
+    title: "Tarifs",
+    text: "Gratuit pour commencer. Orange Money, Moov Money, Wave ou carte.",
   },
   {
-    q: "Comment êtes-vous protégés contre les arnaques ?",
-    a: "Validation humaine de chaque profil, vérification du téléphone et du selfie, détection automatique des demandes d'argent dans les messages, signalement et blocage en un geste, et une équipe de modération qui traite chaque signalement sous 24 h.",
-  },
-  {
-    q: "Combien ça coûte et comment payer ?",
-    a: `L'inscription est gratuite. Premium coûte ${fcfa(PLANS.premium.price)} par mois et Premium+ ${fcfa(PLANS.premium_plus.price)} par mois, payables par Orange Money, Moov Money, Wave ou carte bancaire. Sans engagement ni prélèvement automatique.`,
+    href: "/faq",
+    icon: CircleHelp,
+    title: "FAQ",
+    text: "Toutes les réponses, de l'inscription à la sécurité de tes données.",
   },
 ];
 
-export default function LandingView() {
-  const [navOpen, setNavOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+const TESTIMONIALS = [
+  { i: "A", n: "Aïssata, 29 ans", c: "Ouagadougou", t: "J'ai enfin rencontré quelqu'un qui partage ma foi et ma vision de la famille. Le questionnaire change tout." },
+  { i: "J", n: "Jean-Marc, 34 ans", c: "Bobo-Dioulasso", t: "On voit directement si on est d'accord sur les sujets qui comptent : enfants, argent, religion. C'est rassurant." },
+  { i: "M", n: "Mariam, 31 ans", c: "Diaspora, Paris", t: "Je cherchais quelqu'un qui partage mon projet de retour au pays. Les photos floutées m'ont permis de rester discrète." },
+];
 
+export default function LandingView() {
   return (
     <div className="landing">
-      <DemoBanner />
-      <header className="l-header">
-        <nav className="l-nav">
-          <Logo />
-          <ul className={`l-links${navOpen ? " open" : ""}`} onClick={() => setNavOpen(false)}>
-            <li>
-              <a href="#fonctionnement">Comment ça marche</a>
-            </li>
-            <li>
-              <a href="#compatibilite">Compatibilité</a>
-            </li>
-            <li>
-              <a href="#securite">Sécurité</a>
-            </li>
-            <li>
-              <a href="#tarifs">Tarifs</a>
-            </li>
-            <li>
-              <a href="#faq">FAQ</a>
-            </li>
-          </ul>
-          <div className="l-cta">
-            <Link href="/login" className="btn btn-ghost btn-sm">
-              Se connecter
-            </Link>
-            <Link href="/register" className="btn btn-primary btn-sm">
-              Créer mon profil
-            </Link>
-            <button type="button" className="icon-btn plain l-burger" onClick={() => setNavOpen((o) => !o)} aria-label="Menu" aria-expanded={navOpen}>
-              {navOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
-        </nav>
-      </header>
+      <MarketingHeader />
 
       <section className="l-hero">
         <div className="l-wrap hero-grid">
@@ -214,94 +151,26 @@ export default function LandingView() {
         </div>
       </section>
 
-      <section id="fonctionnement" className="l-section">
+      <section className="l-section">
         <div className="l-wrap">
           <div className="l-head">
-            <span className="eyebrow">Comment ça marche</span>
-            <h2>De l&apos;inscription au mariage, pas à pas</h2>
-            <p>Un parcours sérieux et guidé, loin du swipe à l&apos;infini.</p>
+            <span className="eyebrow">À découvrir</span>
+            <h2>Tout ce qu&apos;il faut savoir avant de commencer</h2>
+            <p>Cinq pages, un sujet à la fois.</p>
           </div>
-          <div className="steps4">
-            {[
-              ["01", "Crée ton profil", "Quelques informations, ta foi, tes critères et ton projet familial. Notre équipe valide ton profil."],
-              ["02", "Réponds au questionnaire", `${QUIZ.length} questions sur ce qui compte vraiment : foi, rôles dans le couple, enfants, argent, famille.`],
-              ["03", "Découvre des profils compatibles", "Chaque recommandation affiche un score et explique pourquoi vous êtes compatibles."],
-              ["04", "Échangez en toute pudeur", "Un intérêt réciproque ouvre la conversation. Avancez à votre rythme, jusqu'au projet de mariage."],
-            ].map(([n, t, d]) => (
-              <div className="step4" key={n}>
-                <span className="s-num">{n}</span>
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </div>
+          <div className="explore-grid">
+            {EXPLORE.map((item) => (
+              <Link href={item.href} className="explore-card" key={item.href}>
+                <span className="ex-ico">
+                  <item.icon size={22} />
+                </span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <span className="ex-more">
+                  En savoir plus <ArrowRight size={15} />
+                </span>
+              </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="compatibilite" className="l-section alt">
-        <div className="l-wrap compat-grid">
-          <div>
-            <span className="eyebrow">Compatibilité</span>
-            <h2>Plus qu&apos;une photo : une vraie compatibilité.</h2>
-            <p className="l-lead">
-              Nous comparons vos réponses sur 8 dimensions, avec la pondération d&apos;un conseiller matrimonial : la religion et les valeurs d&apos;abord, puis le couple, la
-              famille, les enfants, les finances, le mode de vie et la distance.
-            </p>
-            <ul className="l-checks">
-              <li>
-                <Check size={17} /> Les points bloquants (enfants, type d&apos;union) sont repérés et signalés.
-              </li>
-              <li>
-                <Check size={17} /> Les filtres fonctionnent dans les deux sens : tu ne vois que des personnes qui te recherchent aussi.
-              </li>
-              <li>
-                <Check size={17} /> Jamais « l&apos;âme sœur garantie » : des facteurs concrets, à discuter ensemble.
-              </li>
-            </ul>
-          </div>
-          <div className="panel panel-pad compat-demo">
-            <div className="d-score">
-              <ScoreRing score={SAMPLE.score} size={96} stroke={8} />
-              <div>
-                <b>{SAMPLE.label}</b>
-                <p className="muted tiny">Aminata et Ibrahim, sur 8 dimensions</p>
-              </div>
-            </div>
-            <div className="divider" />
-            <CategoryBars categories={SAMPLE.categories} />
-            <div className="divider" />
-            <CompatPoints compat={SAMPLE} />
-          </div>
-        </div>
-      </section>
-
-      <section id="securite" className="l-section">
-        <div className="l-wrap">
-          <div className="l-head">
-            <span className="eyebrow">Confiance et pudeur</span>
-            <h2>Ta sécurité n&apos;est pas négociable</h2>
-            <p>Des règles claires, une équipe de modération, et des outils pensés pour notre culture.</p>
-          </div>
-          <div className="trust-grid">
-            {[
-              [UserCheck, "Profils validés à la main", "Chaque inscription est vérifiée par un modérateur. Badges téléphone et selfie, avec leur signification expliquée."],
-              [EyeOff, "Pudeur respectée", "Floute tes photos jusqu'au match, ou passe en mode invisible. C'est toi qui décides qui te voit."],
-              [Users, "Mode famille", "Implique ton tuteur (wali), un parent ou une personne de confiance, sans exposer tes conversations privées."],
-              [ShieldAlert, "Anti-arnaque", "Les demandes d'argent, liens suspects et propos déplacés sont détectés automatiquement dans les messages."],
-              [Ban, "Signaler et bloquer", "En un geste. Les signalements sont traités sous 24 h et les comptes frauduleux bannis."],
-              [Lock, "Données protégées", "Conversations privées, export et suppression de tes données à tout moment."],
-            ].map(([Icon, t, d]) => {
-              const I = Icon as typeof Lock;
-              return (
-                <div className="trust-item" key={t as string}>
-                  <span className="t-ico">
-                    <I size={20} />
-                  </span>
-                  <h3>{t as string}</h3>
-                  <p>{d as string}</p>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -309,43 +178,20 @@ export default function LandingView() {
       <section className="l-section alt">
         <div className="l-wrap">
           <div className="l-head">
-            <span className="eyebrow">Parcours relationnel</span>
-            <h2>Une relation qui avance, étape par étape</h2>
-            <p>Chaque conversation suit votre progression, de la première question jusqu&apos;au projet de mariage.</p>
-          </div>
-          <div className="journey">
-            {STAGES.map((s, i) => (
-              <div className="j-step" key={s.label}>
-                <span className="j-ico">{s.icon}</span>
-                <b>{s.label}</b>
-                {i < STAGES.length - 1 && <span className="j-line" />}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="l-section">
-        <div className="l-wrap">
-          <div className="l-head">
             <span className="eyebrow">Témoignages</span>
             <h2>Ils ont trouvé une vraie compatibilité</h2>
             <p>Exemples de retours de membres (démonstration).</p>
           </div>
           <div className="quotes">
-            {[
-              ["A", "Aïssata, 29 ans", "Ouagadougou", "J'ai enfin rencontré quelqu'un qui partage ma foi et ma vision de la famille. Le questionnaire change tout."],
-              ["J", "Jean-Marc, 34 ans", "Bobo-Dioulasso", "On voit directement si on est d'accord sur les sujets qui comptent : enfants, argent, religion. C'est rassurant."],
-              ["M", "Mariam, 31 ans", "Diaspora, Paris", "Je cherchais quelqu'un qui partage mon projet de retour au pays. Les photos floutées m'ont permis de rester discrète."],
-            ].map(([i, n, c, t]) => (
-              <figure className="quote" key={n}>
+            {TESTIMONIALS.map((q) => (
+              <figure className="quote" key={q.n}>
                 <div className="stars">★★★★★</div>
-                <blockquote>« {t} »</blockquote>
+                <blockquote>« {q.t} »</blockquote>
                 <figcaption>
-                  <span className="q-ava">{i}</span>
+                  <span className="q-ava">{q.i}</span>
                   <span>
-                    <b>{n}</b>
-                    <small>{c}</small>
+                    <b>{q.n}</b>
+                    <small>{q.c}</small>
                   </span>
                 </figcaption>
               </figure>
@@ -354,108 +200,8 @@ export default function LandingView() {
         </div>
       </section>
 
-      <section id="tarifs" className="l-section alt">
-        <div className="l-wrap">
-          <div className="l-head">
-            <span className="eyebrow">Tarifs</span>
-            <h2>Gratuit pour commencer. Premium pour avancer plus vite.</h2>
-            <p>Paiement par Orange Money, Moov Money, Wave ou carte. Sans engagement, sans prélèvement automatique.</p>
-          </div>
-          <div className="l-plans">
-            {(["free", "premium", "premium_plus"] as const).map((k) => (
-              <div key={k} className={`l-plan${k === "premium" ? " featured" : ""}`}>
-                {k === "premium" && <span className="plan-ribbon">Le plus choisi</span>}
-                <b className="lp-name">{PLANS[k].name}</b>
-                <div className="lp-price">
-                  <strong>{PLANS[k].price === 0 ? "0" : fcfa(PLANS[k].price).replace(" FCFA", "")}</strong> FCFA{PLANS[k].price > 0 && <span> / mois</span>}
-                </div>
-                <p className="lp-tag">{PLANS[k].tagline}</p>
-                <ul>
-                  {PLANS[k].features.map((f) => (
-                    <li key={f}>
-                      <Check size={15} /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/register" className={`btn btn-block ${k === "premium" ? "btn-gold" : "btn-outline"}`}>
-                  {k === "free" ? "Commencer gratuitement" : `Choisir ${PLANS[k].name}`}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="faq" className="l-section">
-        <div className="l-wrap faq-wrap">
-          <div className="l-head">
-            <span className="eyebrow">Questions fréquentes</span>
-            <h2>Tout ce qu&apos;il faut savoir</h2>
-          </div>
-          <div className="faq">
-            {FAQ.map((item, i) => (
-              <div key={item.q} className={`faq-item${openFaq === i ? " open" : ""}`}>
-                <button type="button" className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
-                  {item.q}
-                  <span className="faq-ico">+</span>
-                </button>
-                {openFaq === i && <div className="faq-a">{item.a}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="l-final">
-        <div className="l-wrap final-inner">
-          <Sparkles size={26} />
-          <h2>Ta personne compatible t&apos;attend peut-être déjà.</h2>
-          <p>Inscription gratuite, deux minutes pour créer ton profil.</p>
-          <div className="hero-actions" style={{ justifyContent: "center" }}>
-            <Link href="/register" className="btn btn-white btn-lg">
-              Créer mon profil <ArrowRight size={18} />
-            </Link>
-            <Link href="/login" className="btn btn-lg final-ghost">
-              <MessageCircle size={18} /> Essayer la démo
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <footer className="l-footer">
-        <div className="l-wrap footer-grid">
-          <div>
-            <Logo light />
-            <p>{APP.tagline} La plateforme matrimoniale fondée sur la foi, les valeurs et le projet de vie.</p>
-          </div>
-          <div>
-            <h4>Produit</h4>
-            <a href="#fonctionnement">Comment ça marche</a>
-            <a href="#compatibilite">Compatibilité</a>
-            <a href="#tarifs">Tarifs</a>
-            <a href="#faq">FAQ</a>
-          </div>
-          <div>
-            <h4>Confiance</h4>
-            <Link href="/legal#charte">Charte de bonne conduite</Link>
-            <Link href="/legal#confidentialite">Confidentialité</Link>
-            <Link href="/legal#cgu">Conditions d&apos;utilisation</Link>
-            <a href={`mailto:${APP.supportEmail}`}>Nous contacter</a>
-          </div>
-        </div>
-        <div className="l-wrap footer-bottom">
-          <span>
-            © {APP.year} {APP.name}. Tous droits réservés.
-          </span>
-          <span>Conçu à {APP.hometown}, {APP.market}</span>
-        </div>
-      </footer>
-
-      <div className="l-mobile-cta">
-        <Link href="/register" className="btn btn-primary btn-block">
-          Créer mon profil gratuitement
-        </Link>
-      </div>
+      <FinalCta />
+      <MarketingFooter />
     </div>
   );
 }
