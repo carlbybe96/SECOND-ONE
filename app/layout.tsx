@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
+import { APP } from "@/lib/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,17 +18,29 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: "FaithMatch — Rencontres par compatibilité religieuse",
-    template: "%s · FaithMatch",
+    default: `${APP.name} · Rencontres sérieuses par compatibilité`,
+    template: `%s · ${APP.name}`,
   },
   description:
-    "La plateforme matrimoniale pensée pour les personnes qui recherchent une relation sérieuse et compatible : foi, valeurs et projet de vie. Lancement à Ouagadougou.",
+    "La plateforme matrimoniale pour les personnes qui cherchent une relation sérieuse : foi, valeurs et projet de vie. Profils vérifiés, messagerie modérée, paiement Mobile Money.",
+  applicationName: APP.name,
+  appleWebApp: { capable: true, title: APP.name, statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#00a575",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${manrope.variable} antialiased`}>
-      <body>{children}</body>
+    // data-scroll-behavior : Next 16 ne neutralise plus le défilement fluide pendant les navigations.
+    <html lang="fr" data-scroll-behavior="smooth" className={`${inter.variable} ${manrope.variable}`}>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

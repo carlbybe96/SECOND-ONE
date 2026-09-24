@@ -1,35 +1,28 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import DemoBanner from "@/components/demo-banner";
-import { getSession } from "@/lib/auth";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import FullPageLoader from "@/components/loader";
+import { useDemoRuntime } from "@/components/runtime";
+import { useSession } from "@/lib/hooks";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+/** Espace membre : réservé aux personnes connectées, et à un profil terminé (sauf l'onboarding lui-même). */
+export default function MemberLayout({ children }: { children: React.ReactNode }) {
+  useDemoRuntime();
   const router = useRouter();
-  const [ok, setOk] = useState(false);
+  const path = usePathname();
+  const { data: session, loading } = useSession();
+  const inOnboarding = path.startsWith("/onboarding");
+  const isAdmin = session?.account.role === "admin";
+  const onboarded = !!session?.profile?.onboarded;
 
   useEffect(() => {
-    let active = true;
-    getSession().then((user) => {
-      if (!active) return;
-      if (!user) {
-        router.replace("/register");
-      } else {
-        setOk(true);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [router]);
+    if (loading) return;
+    if (!session) router.replace("/login");
+    else if (isAdmin) router.replace("/admin");
+    else if (!onboarded && !inOnboarding) router.replace("/onboarding");
+  }, [loading, session, isAdmin, onboarded, inOnboarding, router]);
 
-  if (!ok) return null;
-
-  return (
-    <>
-      <DemoBanner />
-      {children}
-    </>
-  );
+  if (loading || !session || isAdmin || (!onboarded && !inOnboarding)) return <FullPageLoader />;
+  return <>{children}</>;
 }

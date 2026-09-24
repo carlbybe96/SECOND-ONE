@@ -1,82 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { computeScore } from "@/lib/questions";
-import type { OnboardingData } from "@/lib/types";
+import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
+import ProfilePhoto from "@/components/ui/photo";
+import { ScoreChip } from "@/components/ui/score";
+import { api } from "@/lib/api";
+import { useQuery } from "@/lib/hooks";
 
-export default function StepDone({
-  firstName,
-  data,
-  onExplore,
-}: {
-  firstName: string;
-  data: OnboardingData;
-  onExplore: () => void;
-}) {
-  const score = computeScore(data.quiz);
-  const [shown, setShown] = useState(0);
-
-  useEffect(() => {
-    let n = 0;
-    const timer = setInterval(() => {
-      n += 3;
-      if (n >= score) {
-        n = score;
-        clearInterval(timer);
-      }
-      setShown(n);
-    }, 40);
-    return () => clearInterval(timer);
-  }, [score]);
-
-  const tags = [
-    ["Religion", (data.religion?.religion || "").split(" — ")[0] || "—"],
-    ["Pratique", data.religion?.pratique || "—"],
-    ["Âge", (data.pref?.age || "").replace(" ans", "") || "—"],
-    ["Enfants", data.famille?.enfants || "—"],
-    ["Famille", data.famille?.importance || "—"],
-  ];
+export default function StepDone({ firstName }: { firstName: string }) {
+  const { data } = useQuery("onboarding-done", () => api.discover(api.DEFAULT_FILTERS));
+  const items = data?.items ?? [];
+  const top = items.slice(0, 3);
 
   return (
-    <div className="card success">
-      <div className="check-badge">✓</div>
-      <div className="eyebrow">Onboarding terminé</div>
-      <h1>Ton profil est prêt, {firstName} ✨</h1>
+    <div className="flow-card success">
+      <div className="check-badge">
+        <Check size={34} strokeWidth={3} />
+      </div>
+      <div className="eyebrow">Profil terminé</div>
+      <h1>Bravo {firstName}, ton profil est prêt</h1>
       <p className="sub">
-        Ta compatibilité est en cours de calcul. Voici un aperçu de ton profil — tu pourras le modifier à tout moment.
+        {data ? (
+          items.length > 0 ? (
+            <>
+              Nous avons trouvé <strong>{items.length} profils compatibles</strong> avec toi. Notre équipe valide ton profil en ce moment : tu peux déjà les découvrir.
+            </>
+          ) : (
+            <>Notre équipe valide ton profil. Élargis un peu tes critères pour voir plus de profils compatibles.</>
+          )
+        ) : (
+          "Calcul de tes compatibilités…"
+        )}
       </p>
-      <div className="ring-wrap">
-        <svg width="170" height="170" viewBox="0 0 170 170">
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#00A575" />
-              <stop offset="100%" stopColor="#2FBF97" />
-            </linearGradient>
-          </defs>
-          <circle className="ring-bg" cx="85" cy="85" r="72" />
-          <circle
-            className="ring-fg"
-            cx="85"
-            cy="85"
-            r="72"
-            style={{ strokeDashoffset: 452 - (452 * shown) / 100 }}
-          />
-        </svg>
-        <div className="ring-num">
-          <strong>{shown}%</strong>
-          <span>compatibilité</span>
+      {top.length > 0 && (
+        <div className="preview-matches">
+          {top.map((c) => (
+            <div className="preview-match" key={c.profile.id}>
+              <ProfilePhoto profile={c.profile} locked={c.photoLocked} size={72} round />
+              <b>
+                {c.profile.firstName}, {c.profile.age}
+              </b>
+              <small>{c.profile.city}</small>
+              <ScoreChip score={c.compat.score} />
+            </div>
+          ))}
         </div>
-      </div>
-      <div className="summary">
-        {tags.map(([k, v]) => (
-          <span key={k} className="tag">
-            {k} : <b>{v}</b>
-          </span>
-        ))}
-      </div>
-      <button className="btn btn-primary" onClick={onExplore}>
-        Voir mes matchs 🔥
-      </button>
+      )}
+      <Link href="/discover" className="btn btn-primary btn-lg" style={{ marginTop: 18 }}>
+        Découvrir mes profils compatibles <ArrowRight size={18} />
+      </Link>
+      <p className="tiny muted" style={{ marginTop: 14 }}>
+        Tu pourras modifier ton profil et refaire le questionnaire à tout moment.
+      </p>
     </div>
   );
 }
