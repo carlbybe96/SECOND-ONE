@@ -20,9 +20,12 @@ export default function DemoBanner() {
   return (
     <div className="demo-banner">
       <span>
-        <b>Démo interactive</b> · profils fictifs · paiements simulés
+        <b>
+          Démo<span className="hide-sm-inline"> interactive</span>
+        </b>{" "}
+        · profils fictifs · paiements simulés
       </span>
-      <button type="button" onClick={reset}>
+      <button type="button" onClick={reset} aria-label="Réinitialiser la démo">
         <RotateCcw size={12} /> Réinitialiser
       </button>
     </div>

@@ -97,7 +97,7 @@ export default function ValidationsView() {
         </div>
       ) : (
         <div className="panel">
-          <ul className="adm-list padded">
+          <ul className="adm-list padded selfie-list">
             {selfies.map(({ profile: p }) => (
               <li key={p.id}>
                 <ProfilePhoto profile={p} size={52} round />

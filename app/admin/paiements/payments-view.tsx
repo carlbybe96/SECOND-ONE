@@ -75,19 +75,23 @@ export default function PaymentsView() {
               const method = PAY_METHODS.find((m) => m.key === p.method);
               return (
                 <tr key={p.id}>
-                  <td>
+                  <td data-label="Date">
                     {shortDate(p.createdAt)} <span className="muted tiny">{timeHM(p.createdAt)}</span>
                   </td>
-                  <td>{p.member}</td>
-                  <td>{ITEM[p.item]}</td>
-                  <td>
+                  <td data-label="Membre">{p.member}</td>
+                  <td data-label="Offre">{ITEM[p.item]}</td>
+                  <td data-label="Moyen">
                     <span className="method">
                       <span className="pm-dot" style={{ background: method?.color }} /> {method?.label}
                     </span>
                   </td>
-                  <td className="mono">{maskPhone(p.phone)}</td>
-                  <td className="mono">{p.ref}</td>
-                  <td>
+                  <td className="mono" data-label="Compte">
+                    {maskPhone(p.phone)}
+                  </td>
+                  <td className="mono" data-label="Référence">
+                    {p.ref}
+                  </td>
+                  <td data-label="Statut">
                     {p.status === "success" ? (
                       <span className="badge badge-green">
                         <CircleCheck size={12} /> Réussi
@@ -98,7 +102,9 @@ export default function PaymentsView() {
                       </span>
                     )}
                   </td>
-                  <td style={{ textAlign: "right", fontWeight: 700 }}>{fcfa(p.amount)}</td>
+                  <td data-label="Montant" style={{ textAlign: "right", fontWeight: 700 }}>
+                    {fcfa(p.amount)}
+                  </td>
                 </tr>
               );
             })}

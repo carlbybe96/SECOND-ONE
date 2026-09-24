@@ -43,6 +43,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color-scheme: light;
+  /* Pas de flash gris au toucher : les états actifs sont dessinés par l'interface. */
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   font-family: var(--font-body);
@@ -51,6 +55,7 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  min-height: 100dvh;
   /* Filet de sécurité mobile : jamais de défilement horizontal (clip garde les en-têtes collants). */
   overflow-x: clip;
 }
@@ -78,6 +83,17 @@ svg {
 }
 button {
   font: inherit;
+}
+/* Supprime le délai de 300 ms et le zoom au double-tap sur les commandes. */
+a,
+button,
+input,
+select,
+textarea,
+label,
+summary,
+[role="button"] {
+  touch-action: manipulation;
 }
 code {
   background: var(--mint-soft);
@@ -265,7 +281,7 @@ code {
 /* ── Formulaires ──────────────────────── */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
 }
 .field {
@@ -371,7 +387,7 @@ code {
 /* ── Choix & puces ────────────────────── */
 .choices {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
 }
 .choice {
@@ -497,6 +513,7 @@ code {
   background: none;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 .link:hover {
   text-decoration: underline;
@@ -693,7 +710,7 @@ code {
 }
 .cat-bar {
   display: grid;
-  grid-template-columns: 92px 1fr 42px;
+  grid-template-columns: 92px minmax(0, 1fr) 42px;
   align-items: center;
   gap: 10px;
   font-size: 0.84rem;
@@ -763,7 +780,10 @@ code {
   width: 100%;
   max-width: 480px;
   max-height: calc(100vh - 32px);
-  overflow: auto;
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
   animation: rise 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -776,6 +796,7 @@ code {
   justify-content: space-between;
   gap: 12px;
   padding: 22px 22px 0;
+  flex: none;
 }
 .modal-head h2 {
   font-size: 1.2rem;
@@ -788,13 +809,20 @@ code {
 }
 .modal-body {
   padding: 18px 22px 22px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .modal-foot {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-  padding: 0 22px 22px;
+  padding: 14px 22px 22px;
   flex-wrap: wrap;
+  flex: none;
+  border-top: 1px solid var(--line);
 }
 .sheet-backdrop {
   position: fixed;
@@ -831,6 +859,9 @@ code {
 .sheet-body {
   flex: 1;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 @keyframes fade {
   from {
@@ -1097,14 +1128,95 @@ a.toast {
   border: 1px solid #fecaca;
 }
 
+/* ── Éléments partagés par l'espace membre et l'administration ── */
+.d-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+}
+.facts dt {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.facts dd {
+  font-size: 0.93rem;
+  color: var(--dark);
+  font-weight: 600;
+  margin-top: 2px;
+}
+.flag-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--danger);
+}
+.table-wrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.87rem;
+}
+.table th {
+  text-align: left;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 700;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+.mono {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.8rem;
+  color: #475569;
+}
+.pm-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Téléphone ────────────────────────── */
+.only-xs,
+.only-sm {
+  display: none !important;
+}
 @media (max-width: 560px) {
   .hide-sm {
     display: none !important;
   }
+  .only-sm {
+    display: inline !important;
+  }
   .form-grid,
   .choices {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
+  /* Fenêtre = fiche qui monte du bas, le pouce atteint les boutons. */
   .modal-backdrop {
     align-items: end;
     padding: 0;
@@ -1112,13 +1224,154 @@ a.toast {
   .modal {
     border-radius: 22px 22px 0 0;
     max-height: 92vh;
+    max-height: 92dvh;
+  }
+  .modal-head {
+    padding: 18px 18px 0;
+  }
+  .modal-body {
+    padding: 14px 18px 18px;
+  }
+  .modal-foot {
+    padding: 12px 18px calc(16px + env(safe-area-inset-bottom));
+  }
+  .modal-foot .btn {
+    flex: 1 1 auto;
   }
   .toaster {
     top: auto;
-    bottom: 86px;
-    left: 16px;
-    right: 16px;
+    bottom: calc(86px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
     width: auto;
+  }
+  .demo-banner {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    text-align: left;
+    padding: 5px 12px;
+    font-size: 0.74rem;
+    gap: 8px;
+  }
+  .demo-banner .hide-sm-inline {
+    display: none;
+  }
+  .demo-banner button {
+    min-height: 32px;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .panel-pad {
+    padding: 18px;
+  }
+  .empty {
+    padding: 34px 16px;
+  }
+}
+@media (max-width: 400px) {
+  .hide-xs {
+    display: none !important;
+  }
+  .only-xs {
+    display: inline !important;
+  }
+  .logo {
+    font-size: 1.05rem;
+    gap: 8px;
+  }
+}
+
+/* Écrans tactiles ou étroits : champs à 16 px (sinon iOS zoome au focus) et zones de toucher confortables. */
+@media (max-width: 720px), (pointer: coarse) {
+  :root .input,
+  :root .field input,
+  :root .field select,
+  :root .field textarea,
+  :root .composer textarea,
+  :root .search input,
+  :root .v-form .input {
+    font-size: 1rem;
+  }
+  .btn {
+    min-height: 46px;
+  }
+  .btn-sm {
+    min-height: 44px;
+  }
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .chip {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .tab {
+    min-height: 44px;
+  }
+  .link {
+    min-height: 44px;
+  }
+  .logo {
+    min-height: 44px;
+  }
+  .switch {
+    width: 50px;
+    height: 30px;
+  }
+  .switch span::before {
+    width: 24px;
+    height: 24px;
+  }
+  .switch input:checked + span::before {
+    transform: translateX(20px);
+  }
+  .consent input {
+    width: 20px;
+    height: 20px;
+  }
+  /* Le flou d'arrière-plan pèse lourd sur les téléphones d'entrée de gamme : fond quasi opaque à la place. */
+  .l-header,
+  .flow-header,
+  .topbar,
+  .tabbar,
+  .l-mobile-cta {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #fff !important;
+  }
+}
+
+/* Pas de survol au doigt : un « hover » resterait collé après le toucher. */
+@media (hover: none) {
+  :root .btn-primary:hover:not(:disabled),
+  :root .btn-gold:hover:not(:disabled),
+  :root .btn-white:hover:not(:disabled),
+  :root .round-btn:hover,
+  :root .stat:hover,
+  :root .reco:hover,
+  :root .demo-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  :root .btn-primary:hover:not(:disabled) {
+    background: var(--primary);
+    box-shadow: 0 6px 16px rgba(0, 165, 117, 0.25);
+  }
+  :root .btn-gold:hover:not(:disabled) {
+    background: var(--gold);
+    box-shadow: 0 6px 16px rgba(184, 134, 11, 0.25);
+  }
+  :root .btn:active:not(:disabled),
+  :root .icon-btn:active,
+  :root .chip:active,
+  :root .choice:active,
+  :root .opt:active {
+    transform: scale(0.97);
+  }
+  :root .round-btn:active {
+    transform: scale(0.92);
   }
 }
 

@@ -2,7 +2,7 @@
 
 import { Briefcase, Crown, Heart, Lock, MapPin, Rocket, SlidersHorizontal, Sparkles, Star, X } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MatchModal, PaywallModal, SuperInterestModal } from "@/components/dialogs";
 import { Empty, PremiumBadge, Skeleton, Verified } from "@/components/ui/bits";
 import { Modal } from "@/components/ui/modal";
@@ -39,10 +39,13 @@ export default function DiscoverView() {
 
   const current = data?.items[0];
   const premium = data?.quota.plan !== "free";
+  const drag = useRef<{ x: number; y: number; t: number; id: number; active: boolean } | null>(null);
+  const swiped = useRef(false);
 
+  // Renvoie false si l'action n'a pas abouti (quota, erreur) : la carte doit alors revenir à sa place.
   const act = useCallback(
-    async (kind: "pass" | "interest") => {
-      if (!current || leaving) return;
+    async (kind: "pass" | "interest"): Promise<boolean> => {
+      if (!current || leaving) return false;
       setLeaving({ id: current.profile.id, dir: kind === "pass" ? "left" : "right" });
       await new Promise((r) => window.setTimeout(r, 230));
       if (kind === "pass") {
@@ -53,12 +56,13 @@ export default function DiscoverView() {
           setLeaving(null);
           if (res.code === "quota" || res.code === "premium") setPaywall(res.error ?? null);
           else toast({ title: "Action impossible", body: res.error, kind: "error" });
-          return;
+          return false;
         }
         if (res.matchId) setMatched({ card: current, matchId: res.matchId });
         else toast({ title: `Intérêt envoyé à ${current.profile.firstName}`, body: "Tu seras prévenu(e) dès qu'il y a une réponse.", kind: "interest" });
       }
       setLeaving(null);
+      return true;
     },
     [current, leaving],
   );
@@ -82,6 +86,65 @@ export default function DiscoverView() {
       // pas grave : les filtres ne seront simplement pas mémorisés
     }
     setShowFilters(false);
+  }
+
+  // Glisser la carte (tactile) : à droite = intérêt, à gauche = passer. Le défilement vertical reste natif (touch-action: pan-y).
+  function resetCard(el: HTMLElement) {
+    el.style.transition = "";
+    el.style.transform = "";
+    el.style.opacity = "";
+    el.style.removeProperty("--swipe");
+    el.style.willChange = "";
+  }
+  function onCardDown(e: React.PointerEvent<HTMLElement>) {
+    if (e.pointerType === "mouse" || leaving) return;
+    drag.current = { x: e.clientX, y: e.clientY, t: performance.now(), id: e.pointerId, active: false };
+  }
+  function onCardMove(e: React.PointerEvent<HTMLElement>) {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    const el = e.currentTarget;
+    if (!d.active) {
+      if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) {
+        drag.current = null;
+        return;
+      }
+      if (Math.abs(dx) < 12) return;
+      d.active = true;
+      el.setPointerCapture(e.pointerId);
+      el.style.transition = "none";
+      el.style.willChange = "transform";
+    }
+    el.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+    el.style.setProperty("--swipe", String(Math.max(-1, Math.min(1, dx / 110))));
+  }
+  function onCardUp(e: React.PointerEvent<HTMLElement>) {
+    const d = drag.current;
+    drag.current = null;
+    if (!d?.active) return;
+    const el = e.currentTarget;
+    const dx = e.clientX - d.x;
+    const speed = Math.abs(dx) / Math.max(1, performance.now() - d.t);
+    // Le doigt levé sur la photo ne doit pas ouvrir le profil.
+    swiped.current = true;
+    window.setTimeout(() => (swiped.current = false), 60);
+    el.style.transition = "";
+    if (Math.abs(dx) > 100 || (Math.abs(dx) > 40 && speed > 0.5)) {
+      const right = dx > 0;
+      el.style.transform = `translateX(${right ? 130 : -130}%) rotate(${right ? 14 : -14}deg)`;
+      el.style.opacity = "0";
+      void act(right ? "interest" : "pass").then((done) => {
+        if (!done) resetCard(el);
+      });
+    } else {
+      resetCard(el);
+    }
+  }
+  function onCardCancel(e: React.PointerEvent<HTMLElement>) {
+    if (drag.current?.active) resetCard(e.currentTarget);
+    drag.current = null;
   }
 
   function openSuper() {
@@ -144,7 +207,26 @@ export default function DiscoverView() {
         </div>
       ) : (
         <div className="discover-grid">
-          <article key={current.profile.id} className={`d-card${leaving?.id === current.profile.id ? ` leave-${leaving.dir}` : ""}`}>
+          <article
+            key={current.profile.id}
+            className={`d-card${leaving?.id === current.profile.id ? ` leave-${leaving.dir}` : ""}`}
+            onPointerDown={onCardDown}
+            onPointerMove={onCardMove}
+            onPointerUp={onCardUp}
+            onPointerCancel={onCardCancel}
+            onClickCapture={(e) => {
+              if (swiped.current) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
+          >
+            <span className="d-stamp like" aria-hidden="true">
+              Intéressé(e)
+            </span>
+            <span className="d-stamp nope" aria-hidden="true">
+              Passer
+            </span>
             <Link href={`/profile/${current.profile.id}`} className="d-photo-link" aria-label={`Voir le profil de ${current.profile.firstName}`}>
               <ProfilePhoto profile={current.profile} locked={current.photoLocked} className="d-photo" />
               <div className="d-badges">
@@ -189,6 +271,7 @@ export default function DiscoverView() {
                 <span className="badge badge-gray">{current.profile.intention === "mariage" ? "💍 Mariage" : "🤝 Relation sérieuse"}</span>
               </div>
               <p className="d-bio">{current.profile.bio}</p>
+              <p className="swipe-hint">↔ Glisse la carte : à droite pour t&apos;intéresser, à gauche pour passer</p>
             </div>
           </article>
 

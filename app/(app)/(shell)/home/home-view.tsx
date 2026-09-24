@@ -2,6 +2,7 @@
 
 import { ArrowRight, Clock, Crown, Eye, Heart, HeartHandshake, Lightbulb, MessageCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
+import InstallHint from "@/components/install-hint";
 import { Skeleton, Verified } from "@/components/ui/bits";
 import ProfilePhoto from "@/components/ui/photo";
 import { ScoreChip, ScoreRing } from "@/components/ui/score";
@@ -41,6 +42,8 @@ export default function HomeView() {
           <p className="muted">Voici où en est ta recherche aujourd&apos;hui.</p>
         </div>
       </div>
+
+      <InstallHint />
 
       {me.status === "pending" && (
         <div className="alert alert-info" style={{ marginBottom: 18 }}>

@@ -1,10 +1,10 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/components/logo";
 import { APP } from "@/lib/config";
+import MobileCta from "./mobile-cta";
 import { NAV } from "./nav";
 
-export default function MarketingFooter({ hideMobileCta = false }: { hideMobileCta?: boolean }) {
+export default function MarketingFooter({ hideMobileCta = false, ctaAfter = 0 }: { hideMobileCta?: boolean; ctaAfter?: number }) {
   return (
     <>
       <footer className="l-footer">
@@ -39,13 +39,7 @@ export default function MarketingFooter({ hideMobileCta = false }: { hideMobileC
         </div>
       </footer>
 
-      {!hideMobileCta && (
-        <div className="l-mobile-cta">
-          <Link href="/register" className="btn btn-primary btn-block">
-            Créer mon profil gratuitement <ArrowRight size={16} />
-          </Link>
-        </div>
-      )}
+      {!hideMobileCta && <MobileCta after={ctaAfter} />}
     </>
   );
 }

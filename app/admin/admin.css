@@ -76,6 +76,7 @@
 }
 .adm-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 .adm-head {
@@ -160,6 +161,7 @@ a.kpi:hover {
 
 .adm-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 .adm-grid.two {
@@ -234,6 +236,16 @@ a.kpi:hover {
 }
 .col:hover .col-tip {
   opacity: 1;
+}
+/* Les bulles des colonnes des bords ne doivent pas sortir de l'écran. */
+.col:nth-child(-n + 3) .col-tip {
+  left: 0;
+  transform: none;
+}
+.col:nth-last-child(-n + 3) .col-tip {
+  left: auto;
+  right: 0;
+  transform: none;
 }
 .cols-axis {
   display: flex;
@@ -322,7 +334,7 @@ a.kpi:hover {
 /* Validations */
 .review-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr));
   gap: 14px;
 }
 .review {
@@ -359,6 +371,7 @@ a.kpi:hover {
 }
 .review-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
 }
@@ -437,7 +450,7 @@ a.kpi:hover {
 }
 .rg-cols {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
 .rg-cols h4 {
@@ -527,10 +540,28 @@ a.kpi:hover {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(0, 165, 117, 0.12);
 }
+.adm-table th,
+.adm-table td {
+  padding-left: 9px;
+  padding-right: 9px;
+}
 .adm-table td {
   white-space: nowrap;
 }
 .adm-table tbody tr:hover {
+  background: #fafcfb;
+}
+/* La dernière colonne (actions, montant) reste visible quand le tableau défile sur un écran moyen. */
+.adm-table th:last-child,
+.adm-table td:last-child {
+  position: sticky;
+  right: 0;
+  background: #fff;
+}
+.adm-table td:last-child {
+  box-shadow: -10px 0 10px -10px rgba(15, 23, 42, 0.14);
+}
+.adm-table tbody tr:hover td:last-child {
   background: #fafcfb;
 }
 .m-cell {
@@ -586,38 +617,54 @@ a.kpi:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .adm-grid.three {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 @media (max-width: 900px) {
   .admin {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
+  /* Barre du haut : logo, onglets qui défilent au doigt, déconnexion. */
   .adm-side {
-    position: static;
+    position: sticky;
+    z-index: 45;
     height: auto;
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 8px 12px;
   }
   .adm-logo {
-    padding: 0 8px 0 0;
+    padding: 0;
+    flex: none;
   }
   .adm-tag {
     display: none;
   }
   .adm-side nav {
     display: flex;
-    overflow-x: auto;
     flex: 1;
+    min-width: 0;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .adm-side nav::-webkit-scrollbar {
+    display: none;
   }
   .adm-link {
     width: auto;
+    flex: none;
     white-space: nowrap;
+    min-height: 44px;
+    border-radius: 999px;
+    padding: 10px 14px;
   }
   .adm-logout {
+    flex: none;
     margin-top: 0;
+    padding: 10px 12px;
   }
   .adm-content {
     padding: 18px 14px 50px;
@@ -625,29 +672,154 @@ a.kpi:hover {
   .adm-grid.two,
   .adm-grid.three,
   .rg-cols {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .review-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .adm-logo .logo > span:last-child,
+  .adm-logout span {
+    display: none;
+  }
+  .adm-logo .logo,
+  .adm-logout {
+    min-width: 44px;
+    justify-content: center;
+  }
+}
+@media (max-width: 720px) {
+  /* Ligne « photo + texte + boutons » : les boutons passent sous le texte au lieu de déborder. */
+  .selfie-list li {
+    flex-wrap: wrap;
+  }
+  .selfie-list li > span {
+    flex: 1 1 calc(100% - 70px);
+  }
+  .selfie-list li > .btn {
+    flex: 1 1 auto;
+  }
+  .adm-toolbar .search {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 100%;
+  }
+  .adm-toolbar .chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -14px;
+    padding: 0 14px 2px;
+    scrollbar-width: none;
+    width: calc(100% + 28px);
+  }
+  .adm-toolbar .chip-row::-webkit-scrollbar {
+    display: none;
+  }
+  .adm-toolbar .chip {
+    flex: none;
+  }
+  /* Tableaux → une carte par ligne (les libellés viennent de data-label). */
+  .table-wrap {
+    overflow: visible;
+  }
+  .adm-table,
+  .adm-table tbody,
+  .adm-table tr,
+  .adm-table td {
+    display: block;
+  }
+  .adm-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .adm-table tr {
+    display: grid;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .adm-table tr:last-child {
+    border-bottom: none;
+  }
+  .adm-table tbody tr:hover {
+    background: none;
+  }
+  .adm-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0;
+    border: none;
+    white-space: normal;
+    text-align: right !important;
+    font-size: 0.88rem;
+  }
+  .adm-table td[data-label]::before {
+    content: attr(data-label);
+    flex: none;
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .adm-table td:not([data-label]) {
+    justify-content: flex-start;
+    text-align: left !important;
+  }
+  .adm-table th:last-child,
+  .adm-table td:last-child {
+    position: static;
+    background: transparent;
+    box-shadow: none;
+  }
+  .adm-table tbody tr:hover td:last-child {
+    background: transparent;
+  }
+  .adm-table .row-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 6px;
+    padding-top: 4px;
+  }
+  .row-actions .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .adm-table .mono {
+    word-break: break-all;
   }
 }
 @media (max-width: 560px) {
   .review {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .review-photo {
     min-height: 0;
     aspect-ratio: 1 / 1;
   }
   .member-view {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .kpis,
   .kpis.four {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 10px;
   }
+  .kpi {
+    padding: 14px;
+  }
   .kpi-value {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 5.2vw, 1.2rem);
+    overflow-wrap: anywhere;
+  }
+  .adm-head h1 {
+    font-size: 1.35rem;
   }
 }

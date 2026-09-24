@@ -62,7 +62,7 @@ export default function LoginView() {
 
   return (
     <main className="auth-wrap">
-      <div className="flow-card">
+      <div className={`flow-card${IS_DEMO ? " has-demo" : ""}`}>
         <div className="eyebrow">Connexion</div>
         <h1>Content de te revoir 👋</h1>
         <p className="sub">Retrouve tes recommandations, tes matchs et tes conversations.</p>
@@ -71,7 +71,17 @@ export default function LoginView() {
           <div className="form-grid">
             <div className="field full">
               <label htmlFor="lEmail">Adresse e-mail</label>
-              <input id="lEmail" type="email" placeholder="aicha@exemple.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input
+                id="lEmail"
+                type="email"
+                placeholder="aicha@exemple.com"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="field full">
               <label htmlFor="lPass">Mot de passe</label>

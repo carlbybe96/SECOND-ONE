@@ -3,7 +3,7 @@
 import { CreditCard, Flag, LayoutDashboard, LogOut, ShieldCheck, UserCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import DemoBanner from "@/components/demo-banner";
 import FullPageLoader from "@/components/loader";
 import Logo from "@/components/logo";
@@ -19,6 +19,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { data: session, loading } = useSession();
   const isAdmin = session?.account.role === "admin";
   const { data: stats } = useQuery(`admin-nav:${isAdmin}`, () => (isAdmin ? api.adminStats() : Promise.resolve(null)));
+  const navRef = useRef<HTMLElement>(null);
+
+  // Sur téléphone les onglets défilent : on amène l'onglet actif dans la zone visible.
+  useEffect(() => {
+    const bar = navRef.current;
+    const el = bar?.querySelector<HTMLElement>(".adm-link.active");
+    if (!bar || !el) return;
+    const b = bar.getBoundingClientRect();
+    const e = el.getBoundingClientRect();
+    bar.scrollLeft += e.left - b.left - (b.width - e.width) / 2;
+  }, [path, isAdmin]);
 
   useEffect(() => {
     if (loading) return;
@@ -45,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <ShieldCheck size={13} /> Modération
           </span>
         </div>
-        <nav>
+        <nav ref={navRef} aria-label="Navigation de l'administration">
           {nav.map((n) => {
             const active = n.href === "/admin" ? path === "/admin" : path.startsWith(n.href);
             return (

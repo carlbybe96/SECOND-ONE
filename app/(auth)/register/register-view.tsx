@@ -120,7 +120,18 @@ export default function RegisterView() {
             </div>
             <div className="field full">
               <label htmlFor="fEmail">Adresse e-mail</label>
-              <input id="fEmail" type="email" placeholder="aicha@exemple.com" autoComplete="email" value={form.email} onChange={set("email")} className={errors.email ? "error" : ""} />
+              <input
+                id="fEmail"
+                type="email"
+                placeholder="aicha@exemple.com"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={form.email}
+                onChange={set("email")}
+                className={errors.email ? "error" : ""}
+              />
             </div>
             <div className="field">
               <label htmlFor="fPass">Mot de passe</label>

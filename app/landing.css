@@ -45,12 +45,28 @@
 .l-links a.active {
   color: var(--primary-700);
 }
+.l-links a.btn {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.l-links a.btn-primary {
+  color: #fff;
+}
+.l-links a.btn-outline {
+  color: var(--dark);
+}
 .l-cta {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 .l-burger {
+  display: none;
+}
+.l-links-cta {
+  display: none;
+}
+.l-scrim {
   display: none;
 }
 
@@ -309,7 +325,7 @@
 }
 .steps4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
 }
 .step4 {
@@ -380,7 +396,7 @@
 }
 .trust-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 .trust-item {
@@ -445,7 +461,7 @@
 }
 .quotes {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 .quote {
@@ -491,7 +507,7 @@
 }
 .l-plans {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
   align-items: stretch;
 }
@@ -642,7 +658,7 @@
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 32px;
 }
 .footer-grid p {
@@ -742,7 +758,7 @@
 /* ── Comment ça marche : délais + checklist ─────── */
 .expect-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 .expect-item {
@@ -773,7 +789,7 @@
 /* ── Compatibilité : dimensions pondérées ───────── */
 .dim-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 .dim-item {
@@ -805,7 +821,7 @@
 /* ── Sécurité : badges + pipeline de modération ─── */
 .badge-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 .badge-card {
@@ -865,7 +881,7 @@
 /* ── Tarifs : add-ons + moyens de paiement ──────── */
 .addon-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
 .addon-card {
@@ -887,7 +903,7 @@
 }
 .pay-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 .pay-card {
@@ -961,7 +977,7 @@
 @media (max-width: 1000px) {
   .hero-grid,
   .compat-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 44px;
   }
   .steps4,
@@ -971,10 +987,10 @@
   .dim-grid,
   .badge-grid,
   .pay-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .expect-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .chip-a {
     left: -40px;
@@ -987,25 +1003,47 @@
   .l-links {
     display: none;
     position: absolute;
+    z-index: 1;
     top: 100%;
     left: 0;
     right: 0;
     flex-direction: column;
-    gap: 4px;
+    gap: 0;
     background: #fff;
     border-bottom: 1px solid var(--line);
-    padding: 10px 24px 16px;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    padding: 6px 24px 16px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    max-height: calc(100vh - 110px);
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .l-links.open {
     display: flex;
   }
-  .l-links a {
+  .l-links li:not(.l-links-cta) + li:not(.l-links-cta) {
+    border-top: 1px solid var(--line);
+  }
+  .l-links a:not(.btn) {
     display: block;
-    padding: 10px 0;
+    padding: 14px 0;
+    font-size: 1rem;
   }
   .l-burger {
     display: inline-grid;
+  }
+  .l-scrim {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    border: 0;
+    padding: 0;
+    background: rgba(15, 23, 42, 0.38);
+    cursor: default;
   }
 }
 @media (max-width: 640px) {
@@ -1014,8 +1052,19 @@
     padding-left: 16px;
     padding-right: 16px;
   }
-  .l-cta .btn-ghost {
+  /* « Créer mon profil » vit dans le menu et dans la barre fixe du bas : l'en-tête reste léger. */
+  .l-cta .l-cta-main {
     display: none;
+  }
+  .l-links.open .l-links-cta {
+    display: block;
+    margin-top: 12px;
+  }
+  .l-links.open .l-links-login {
+    display: none;
+  }
+  .l-nav {
+    gap: 8px;
   }
   .l-hero {
     padding: 40px 0 56px;
@@ -1032,7 +1081,7 @@
   .badge-grid,
   .addon-grid,
   .pay-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .topic-hero {
     padding: 40px 0;
@@ -1048,7 +1097,7 @@
   }
   .journey {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 4px;
   }
   .j-ico {
@@ -1066,7 +1115,7 @@
   }
   .strip-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .strip-grid span {
     font-size: 0.8rem;
@@ -1077,13 +1126,101 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 60;
+    z-index: 40;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--line);
+    transform: translateY(105%);
+    transition: transform 0.25s ease;
+  }
+  .l-mobile-cta.show {
+    transform: none;
   }
   .l-footer {
     padding-bottom: 90px;
+  }
+  .footer-grid a {
+    display: block;
+    padding: 11px 0;
+  }
+  .section-more a {
+    padding: 12px 18px;
+  }
+  .compat-grid .section-more a {
+    padding: 13px 0;
+  }
+}
+
+/* Très petits écrans (320 px) : l'en-tête ne garde que le logo et le menu. */
+@media (max-width: 349px) {
+  .l-cta .l-cta-login {
+    display: none;
+  }
+  .l-links.open .l-links-login {
+    display: block;
+    margin-top: 12px;
+  }
+  .l-links.open .l-links-login + .l-links-cta {
+    margin-top: 8px;
+  }
+}
+
+/* Boutons d'appel à l'action : pleine largeur, faciles à atteindre au pouce. */
+@media (max-width: 560px) {
+  .hero-actions {
+    flex-direction: column;
+  }
+  .hero-actions .btn {
+    width: 100%;
+  }
+  .btn-lg {
+    padding: 14px 22px;
+  }
+}
+
+/* Téléphone : cartes plus compactes (icône à gauche) et témoignages qu'on fait défiler au doigt. */
+@media (max-width: 640px) {
+  .step4,
+  .trust-item {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: start;
+    padding: 18px;
+  }
+  .step4 .s-num,
+  .trust-item .t-ico {
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+  }
+  .step4 h3,
+  .trust-item h3 {
+    margin-bottom: 4px;
+    align-self: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .step4 p,
+  .trust-item p {
+    grid-column: 2;
+  }
+  .quotes {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin: 0 -16px;
+    padding: 4px 16px 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .quotes::-webkit-scrollbar {
+    display: none;
+  }
+  .quote {
+    flex: 0 0 84%;
+    scroll-snap-align: center;
   }
 }

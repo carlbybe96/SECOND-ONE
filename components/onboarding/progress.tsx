@@ -22,6 +22,7 @@ export default function Progress({ step, onBack }: { step: number; onBack: () =>
               {label}
             </div>
           ))}
+          <span className="step-count">{step > total ? "Terminé" : `Étape ${step} sur ${total}`}</span>
         </div>
         <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done}>
           <div className="bar-fill" style={{ width: `${Math.max(4, (done / total) * 100)}%` }} />

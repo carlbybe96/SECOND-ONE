@@ -100,13 +100,13 @@ export default function MembersView() {
                       </span>
                     </span>
                   </td>
-                  <td>{p.city}</td>
-                  <td>{religionLine(p)}</td>
-                  <td>
+                  <td data-label="Ville">{p.city}</td>
+                  <td data-label="Religion">{religionLine(p)}</td>
+                  <td data-label="Statut">
                     <StatusBadge status={p.status} />
                     {m.reports > 0 && <span className="badge badge-red" style={{ marginLeft: 6 }}>{m.reports} signal.</span>}
                   </td>
-                  <td>
+                  <td data-label="Offre">
                     {p.plan === "free" ? (
                       <span className="muted">Gratuit</span>
                     ) : (
@@ -115,8 +115,10 @@ export default function MembersView() {
                       </span>
                     )}
                   </td>
-                  <td>{shortDate(p.createdAt)}</td>
-                  <td style={{ textAlign: "right" }}>{m.payments ? fcfa(m.payments) : "–"}</td>
+                  <td data-label="Inscription">{shortDate(p.createdAt)}</td>
+                  <td data-label="Payé" style={{ textAlign: "right" }}>
+                    {m.payments ? fcfa(m.payments) : "–"}
+                  </td>
                   <td>
                     <span className="row-actions">
                       <button type="button" className="icon-btn plain" onClick={() => setViewing(m)} aria-label={`Voir ${p.firstName}`} title="Voir le profil">

@@ -25,12 +25,17 @@ export const metadata: Metadata = {
     "La plateforme matrimoniale pour les personnes qui cherchent une relation sérieuse : foi, valeurs et projet de vie. Profils vérifiés, messagerie modérée, paiement Mobile Money.",
   applicationName: APP.name,
   appleWebApp: { capable: true, title: APP.name, statusBarStyle: "default" },
+  // iOS transformerait les montants (2.500, 5.000…) en numéros de téléphone cliquables.
+  formatDetection: { telephone: false, email: false, address: false },
 };
 
 export const viewport: Viewport = {
   themeColor: "#00a575",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
+  // Chrome Android : le clavier réduit la page au lieu de la recouvrir (le champ de message reste visible).
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

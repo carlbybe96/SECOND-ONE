@@ -245,7 +245,7 @@ export default function LandingView() {
       </section>
 
       <FinalCta />
-      <MarketingFooter />
+      <MarketingFooter ctaAfter={520} />
     </div>
   );
 }

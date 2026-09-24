@@ -188,6 +188,7 @@ export default function ProfileView() {
               <button type="button" className="icon-btn" onClick={() => setMenu((m) => !m)} aria-label="Plus d'actions" aria-expanded={menu}>
                 <MoreHorizontal size={18} />
               </button>
+              {menu && <button type="button" className="menu-scrim" aria-label="Fermer le menu" tabIndex={-1} onClick={() => setMenu(false)} />}
               {menu && (
                 <div className="dropdown" onMouseLeave={() => setMenu(false)}>
                   <button

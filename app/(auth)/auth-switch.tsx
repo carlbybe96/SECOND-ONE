@@ -10,7 +10,14 @@ export default function AuthSwitch() {
     <div className="aside">
       <span className="hide-sm">{onLogin ? "Pas encore membre ?" : "Déjà membre ?"}</span>
       <Link href={onLogin ? "/register" : "/login"} className="btn btn-outline btn-sm">
-        {onLogin ? "Créer un compte" : "Se connecter"}
+        {onLogin ? (
+          <>
+            <span className="hide-xs">Créer un compte</span>
+            <span className="only-xs">S&apos;inscrire</span>
+          </>
+        ) : (
+          "Se connecter"
+        )}
       </Link>
     </div>
   );

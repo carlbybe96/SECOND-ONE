@@ -186,7 +186,7 @@
 }
 .demo-access .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-top: 12px;
 }
@@ -252,6 +252,9 @@
 }
 .step-labels .lab.done {
   color: var(--primary-600);
+}
+.step-count {
+  display: none;
 }
 .step-labels .lab.active {
   color: var(--primary-700);
@@ -480,7 +483,7 @@
 
 @media (max-width: 960px) {
   .auth-wrap {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     max-width: 640px;
   }
   .brand-panel {
@@ -491,15 +494,59 @@
   .flow-card {
     padding: 24px 18px;
   }
+  .flow-topbar {
+    padding: 10px 16px;
+  }
   .auth-wrap,
   .onb-main {
     padding-top: 18px;
   }
-  .step-labels .lab {
-    font-size: 0.62rem;
+  .auth-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .onb-main,
+  .progress-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  /* Cinq libellés ne tiennent pas en 320 px : on n'affiche que l'étape en cours. */
+  .step-labels {
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .step-labels .lab:not(.active) {
+    display: none;
+  }
+  .step-labels .lab.active {
+    flex: none;
+    font-size: 0.95rem;
+    text-align: left;
+    font-family: var(--font-display);
+  }
+  .step-count {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  /* Démo : les comptes prêts à l'emploi passent avant le formulaire, c'est le chemin le plus court pour la présentation. */
+  .flow-card.has-demo {
+    display: flex;
+    flex-direction: column;
+  }
+  .flow-card.has-demo .demo-access {
+    order: 1;
+    margin: 20px 0 0;
+  }
+  .flow-card.has-demo form {
+    order: 2;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
   }
   .demo-access .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .demo-btn {
     flex-direction: row;

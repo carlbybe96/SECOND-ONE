@@ -16,7 +16,35 @@ import { dayLabel, presence, timeHM } from "@/lib/format";
 import { useNow, useQuery, useSession } from "@/lib/hooks";
 import { ICE_BREAKERS, dailyQuestion } from "@/lib/profile-utils";
 
+/**
+ * Suit la zone réellement visible quand le clavier du téléphone s'ouvre (iOS ne redimensionne pas la page).
+ * Expose --vv-h / --vv-top (utilisés par shell.css) et data-kb="1" sur <html> tant que le clavier est ouvert.
+ */
+function useKeyboardViewport() {
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const root = document.documentElement;
+    const apply = () => {
+      root.style.setProperty("--vv-h", `${vv.height}px`);
+      root.style.setProperty("--vv-top", `${vv.offsetTop}px`);
+      root.dataset.kb = window.innerHeight - vv.height > 140 ? "1" : "0";
+    };
+    apply();
+    vv.addEventListener("resize", apply);
+    vv.addEventListener("scroll", apply);
+    return () => {
+      vv.removeEventListener("resize", apply);
+      vv.removeEventListener("scroll", apply);
+      root.style.removeProperty("--vv-h");
+      root.style.removeProperty("--vv-top");
+      delete root.dataset.kb;
+    };
+  }, []);
+}
+
 export default function ConversationView() {
+  useKeyboardViewport();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { data: session } = useSession();
@@ -30,7 +58,7 @@ export default function ConversationView() {
   const [report, setReport] = useState(false);
   const [block, setBlock] = useState(false);
   const [unmatch, setUnmatch] = useState(false);
-  const endRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const count = conv?.messages.length ?? 0;
   const typing = !!conv?.typingUntil && now >= conv.typingUntil - 2600;
@@ -41,9 +69,15 @@ export default function ConversationView() {
     if (unread) api.markRead(id);
   }, [conv, id, me?.id]);
 
+  const seenCount = useRef(0);
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: count > 0 ? "smooth" : "auto", block: "end" });
-  }, [count, typing]);
+    const el = bodyRef.current;
+    if (!el) return;
+    // Ouverture de la conversation : saut direct en bas ; ensuite, défilement doux pour chaque nouveau message.
+    const first = seenCount.current === 0;
+    seenCount.current = count;
+    el.scrollTo({ top: el.scrollHeight, behavior: first ? "auto" : "smooth" });
+  }, [count, typing, conv?.warning]);
 
   if (!me) return null;
   if (loading && !conv) return <div className="conv-placeholder panel" />;
@@ -104,6 +138,7 @@ export default function ConversationView() {
           <button type="button" className="icon-btn plain" onClick={() => setMenu((m) => !m)} aria-label="Plus d'actions" aria-expanded={menu}>
             <MoreVertical size={19} />
           </button>
+          {menu && <button type="button" className="menu-scrim" aria-label="Fermer le menu" tabIndex={-1} onClick={() => setMenu(false)} />}
           {menu && (
             <div className="dropdown" onMouseLeave={() => setMenu(false)}>
               <Link href={`/profile/${other.id}`} onClick={() => setMenu(false)}>
@@ -171,7 +206,7 @@ export default function ConversationView() {
         </div>
       )}
 
-      <div className="chat-body">
+      <div className="chat-body" ref={bodyRef}>
         {conv.messages.length === 0 && (
           <div className="chat-intro">
             <ProfilePhoto profile={other} size={72} round />
@@ -215,7 +250,6 @@ export default function ConversationView() {
             </div>
           </div>
         )}
-        <div ref={endRef} />
       </div>
 
       {showIdeas && (
@@ -253,6 +287,9 @@ export default function ConversationView() {
           value={text}
           rows={1}
           maxLength={1000}
+          enterKeyHint="send"
+          autoComplete="off"
+          autoCapitalize="sentences"
           placeholder={`Écris à ${other.firstName}…`}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
