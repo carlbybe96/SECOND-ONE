@@ -1,17 +1,9 @@
-import { Ban, BadgeCheck, Camera, EyeOff, Flag, IdCard, Lock, Phone, ShieldAlert, UserCheck, Users } from "lucide-react";
+import { BadgeCheck, Camera, Flag, IdCard, Phone } from "lucide-react";
 import Link from "next/link";
 import FinalCta from "@/components/marketing/final-cta";
 import MarketingFooter from "@/components/marketing/footer";
 import MarketingHeader, { TopicHero } from "@/components/marketing/header";
-
-const TRUST = [
-  [UserCheck, "Profils validés à la main", "Chaque inscription est vérifiée par un modérateur avant d'être visible. Aucun bot, aucun faux profil ne passe."],
-  [EyeOff, "Pudeur respectée", "Floute tes photos jusqu'au match, ou passe en mode invisible. C'est toi qui décides qui te voit."],
-  [Users, "Mode famille", "Implique ton tuteur (wali), un parent ou une personne de confiance, sans jamais exposer tes conversations privées."],
-  [ShieldAlert, "Anti-arnaque", "Les demandes d'argent, liens suspects et comportements automatisés sont détectés dans les messages, en temps réel."],
-  [Ban, "Signaler et bloquer", "En un geste, depuis un profil ou une conversation. Les signalements sont traités sous 24 h."],
-  [Lock, "Données protégées", "Conversations privées, export et suppression de tes données à tout moment, depuis les paramètres."],
-] as const;
+import TrustGrid from "@/components/marketing/trust-grid";
 
 const BADGES = [
   { icon: Phone, name: "Téléphone vérifié", text: "Un code est envoyé par SMS au numéro que tu indiques. Confirme-le pour débloquer ce premier badge." },
@@ -38,17 +30,7 @@ export default function SecurityView() {
 
       <section className="l-section">
         <div className="l-wrap">
-          <div className="trust-grid">
-            {TRUST.map(([Icon, t, d]) => (
-              <div className="trust-item" key={t}>
-                <span className="t-ico">
-                  <Icon size={20} />
-                </span>
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </div>
-            ))}
-          </div>
+          <TrustGrid />
         </div>
       </section>
 

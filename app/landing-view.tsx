@@ -1,46 +1,22 @@
 "use client";
 
-import { ArrowRight, BadgeCheck, Check, CircleHelp, Compass, EyeOff, Heart, HeartHandshake, ShieldAlert, ShieldCheck, Star, UserCheck, Users, Wallet, X } from "lucide-react";
+import { ArrowRight, BadgeCheck, Check, EyeOff, Heart, HeartHandshake, ShieldAlert, ShieldCheck, Star, UserCheck, Users, X } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { LogoMark } from "@/components/logo";
+import CompatDemoCard from "@/components/marketing/compat-demo";
 import FinalCta from "@/components/marketing/final-cta";
 import MarketingFooter from "@/components/marketing/footer";
 import MarketingHeader from "@/components/marketing/header";
+import PricingCards from "@/components/marketing/pricing-cards";
+import SectionMore from "@/components/marketing/section-more";
+import StepsGrid from "@/components/marketing/steps-grid";
+import TrustGrid from "@/components/marketing/trust-grid";
 import ProfilePhoto from "@/components/ui/photo";
 import { ScoreRing } from "@/components/ui/score";
-
-const EXPLORE = [
-  {
-    href: "/comment-ca-marche",
-    icon: Compass,
-    title: "Comment ça marche",
-    text: "Un parcours guidé en 4 étapes, de l'inscription au projet de mariage.",
-  },
-  {
-    href: "/compatibilite",
-    icon: HeartHandshake,
-    title: "Compatibilité",
-    text: "8 dimensions analysées, un score expliqué, jamais une boîte noire.",
-  },
-  {
-    href: "/securite",
-    icon: ShieldCheck,
-    title: "Sécurité",
-    text: "Profils validés à la main, messagerie modérée, anti-arnaque intégré.",
-  },
-  {
-    href: "/tarifs",
-    icon: Wallet,
-    title: "Tarifs",
-    text: "Gratuit pour commencer. Orange Money, Moov Money, Wave ou carte.",
-  },
-  {
-    href: "/faq",
-    icon: CircleHelp,
-    title: "FAQ",
-    text: "Toutes les réponses, de l'inscription à la sécurité de tes données.",
-  },
-];
+import { APP, PLANS } from "@/lib/config";
+import { fcfa } from "@/lib/format";
+import { QUIZ } from "@/lib/questions";
 
 const TESTIMONIALS = [
   { i: "A", n: "Aïssata, 29 ans", c: "Ouagadougou", t: "J'ai enfin rencontré quelqu'un qui partage ma foi et ma vision de la famille. Le questionnaire change tout." },
@@ -48,7 +24,16 @@ const TESTIMONIALS = [
   { i: "M", n: "Mariam, 31 ans", c: "Diaspora, Paris", t: "Je cherchais quelqu'un qui partage mon projet de retour au pays. Les photos floutées m'ont permis de rester discrète." },
 ];
 
+const FAQ_PREVIEW = [
+  { q: `${APP.name} est-il une application de drague ?`, a: "Non. C'est une plateforme matrimoniale : profils validés à la main, messages modérés, recommandations limitées pour privilégier la qualité." },
+  { q: "Comment la compatibilité est-elle calculée ?", a: `${QUIZ.length} questions sur 7 thèmes, comparées entre deux profils sur 8 dimensions pondérées. Tu obtiens un score, les points communs et ceux à discuter.` },
+  { q: "Combien ça coûte ?", a: `L'inscription est gratuite. Premium coûte ${fcfa(PLANS.premium.price)} par mois, payable par Orange Money, Moov Money, Wave ou carte. Sans engagement.` },
+  { q: "Puis-je rester discret ou discrète ?", a: "Oui. Photos floutées jusqu'au match, mode invisible, et mode famille pour impliquer un tuteur sans exposer tes conversations." },
+];
+
 export default function LandingView() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   return (
     <div className="landing">
       <MarketingHeader />
@@ -151,27 +136,53 @@ export default function LandingView() {
         </div>
       </section>
 
-      <section className="l-section">
+      <section id="fonctionnement" className="l-section">
         <div className="l-wrap">
           <div className="l-head">
-            <span className="eyebrow">À découvrir</span>
-            <h2>Tout ce qu&apos;il faut savoir avant de commencer</h2>
-            <p>Cinq pages, un sujet à la fois.</p>
+            <span className="eyebrow">Comment ça marche</span>
+            <h2>De l&apos;inscription au mariage, pas à pas</h2>
+            <p>Un parcours sérieux et guidé, loin du swipe à l&apos;infini.</p>
           </div>
-          <div className="explore-grid">
-            {EXPLORE.map((item) => (
-              <Link href={item.href} className="explore-card" key={item.href}>
-                <span className="ex-ico">
-                  <item.icon size={22} />
-                </span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-                <span className="ex-more">
-                  En savoir plus <ArrowRight size={15} />
-                </span>
-              </Link>
-            ))}
+          <StepsGrid />
+          <SectionMore href="/comment-ca-marche" label="Voir le parcours complet, avec les délais" />
+        </div>
+      </section>
+
+      <section id="compatibilite" className="l-section alt">
+        <div className="l-wrap compat-grid">
+          <div>
+            <span className="eyebrow">Compatibilité</span>
+            <h2>Plus qu&apos;une photo : une vraie compatibilité.</h2>
+            <p className="l-lead">
+              Nous comparons vos réponses sur 8 dimensions, avec la pondération d&apos;un conseiller matrimonial : la religion et les valeurs d&apos;abord, puis le couple, la
+              famille, les enfants, les finances, le mode de vie et la distance.
+            </p>
+            <ul className="l-checks">
+              <li>
+                <Check size={17} /> Les points bloquants (enfants, type d&apos;union) sont repérés et signalés.
+              </li>
+              <li>
+                <Check size={17} /> Les filtres fonctionnent dans les deux sens : tu ne vois que des personnes qui te recherchent aussi.
+              </li>
+              <li>
+                <Check size={17} /> Jamais « l&apos;âme sœur garantie » : des facteurs concrets, à discuter ensemble.
+              </li>
+            </ul>
+            <SectionMore href="/compatibilite" label="Voir les 8 dimensions en détail" />
           </div>
+          <CompatDemoCard />
+        </div>
+      </section>
+
+      <section id="securite" className="l-section">
+        <div className="l-wrap">
+          <div className="l-head">
+            <span className="eyebrow">Confiance et pudeur</span>
+            <h2>Ta sécurité n&apos;est pas négociable</h2>
+            <p>Des règles claires, une équipe de modération, et des outils pensés pour notre culture.</p>
+          </div>
+          <TrustGrid />
+          <SectionMore href="/securite" label="Voir les badges et la modération en détail" />
         </div>
       </section>
 
@@ -197,6 +208,39 @@ export default function LandingView() {
               </figure>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="tarifs" className="l-section">
+        <div className="l-wrap">
+          <div className="l-head">
+            <span className="eyebrow">Tarifs</span>
+            <h2>Gratuit pour commencer. Premium pour avancer plus vite.</h2>
+            <p>Paiement par Orange Money, Moov Money, Wave ou carte. Sans engagement, sans prélèvement automatique.</p>
+          </div>
+          <PricingCards />
+          <SectionMore href="/tarifs" label="Boost, accompagnement VIP et moyens de paiement" />
+        </div>
+      </section>
+
+      <section id="faq" className="l-section alt">
+        <div className="l-wrap faq-wrap">
+          <div className="l-head">
+            <span className="eyebrow">Questions fréquentes</span>
+            <h2>Tout ce qu&apos;il faut savoir</h2>
+          </div>
+          <div className="faq">
+            {FAQ_PREVIEW.map((item, i) => (
+              <div key={item.q} className={`faq-item${openFaq === i ? " open" : ""}`}>
+                <button type="button" className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
+                  {item.q}
+                  <span className="faq-ico">+</span>
+                </button>
+                {openFaq === i && <div className="faq-a">{item.a}</div>}
+              </div>
+            ))}
+          </div>
+          <SectionMore href="/faq" label="Voir toutes les questions" />
         </div>
       </section>
 
