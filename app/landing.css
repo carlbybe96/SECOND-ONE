@@ -1174,6 +1174,9 @@
   .hero-actions .btn {
     width: 100%;
   }
+  .l-final .hero-actions {
+    width: 100%;
+  }
   .btn-lg {
     padding: 14px 22px;
   }
@@ -1222,5 +1225,50 @@
   .quote {
     flex: 0 0 84%;
     scroll-snap-align: center;
+  }
+}
+
+/* Téléphone : les 8 dimensions en lignes compactes (icône, titre, poids) au lieu de 8 grandes cartes. */
+@media (max-width: 640px) {
+  .dim-item {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    column-gap: 14px;
+    align-items: center;
+    padding: 16px 18px;
+  }
+  .dim-top {
+    display: contents;
+  }
+  .dim-item .t-ico {
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+    align-self: start;
+  }
+  .dim-item h3 {
+    grid-column: 2;
+    margin: 0;
+  }
+  .dim-weight {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .dim-item p {
+    grid-column: 2 / -1;
+    margin-top: 4px;
+  }
+}
+
+/* Téléphone : les 4 moyens de paiement en grille 2 x 2. */
+@media (max-width: 640px) {
+  .pay-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .pay-card {
+    padding: 16px 12px;
+  }
+  .pay-card p {
+    font-size: 0.8rem;
   }
 }

@@ -1667,6 +1667,12 @@
     position: static;
   }
 }
+/* Sur téléphone, le score de compatibilité (ce qui fait la valeur de l'app) vient tout de suite après la photo. */
+@media (max-width: 720px) {
+  .pf-compat {
+    order: -1;
+  }
+}
 @media (max-width: 1023px) {
   .msg-layout {
     grid-template-columns: minmax(0, 1fr);
